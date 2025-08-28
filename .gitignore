@@ -1,3 +1,5 @@
 node_modules/
+@mongodb-js
+dist/
 package-lock.json
 .env
