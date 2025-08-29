@@ -1,13 +1,13 @@
 const express = require("express");
-const verifyUser = require("../middleware/verifyUser")
+const verifyUser = require("../../middleware/verifyUser")
 const authRouter = express.Router();
-const { signup, login, getProfile } = require("../controllers/userAuthenticate");
+const { signup, login, getProfile } = require("../../controllers/userAuthenticate");
 
 // register or signup
 authRouter.post("/signup", signup)
 
 // login
-authRouter.post("/login",verifyUser, login);
+authRouter.post("/login", login);
 
 // logout
 // authRouter.post("/logout",verifyUser, logout);
@@ -19,3 +19,5 @@ authRouter.get("/getProfile",verifyUser, getProfile)
 // forget password
 // reset password
 // Google signup
+
+module.exports = authRouter;

@@ -3,7 +3,7 @@ const app = express();
 require("dotenv").config()
 const main = require("./config/db")
 const cookieParser = require("cookie-parser")
-const userAuth = require("../routes/userAuth")
+const userAuth = require("./routes/userAuthh")
 
 
 app.use(express.json())
