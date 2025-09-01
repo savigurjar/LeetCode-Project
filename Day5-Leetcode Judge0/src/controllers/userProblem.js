@@ -78,19 +78,3 @@ const createProblem = async (req, res) => {
 module.exports = createProblem;
 
 
-// const submissions = [
-//     {
-//       "language_id": 46,
-//       "source_code": "echo hello from Bash",
-//       stdin:23,
-//       expected_output:43,
-//     },
-//     {
-//       "language_id": 123456789,
-//       "source_code": "print(\"hello from Python\")"
-//     },
-//     {
-//       "language_id": 72,
-//       "source_code": ""
-//     }
-//   ]
