@@ -205,7 +205,9 @@ const getAllProblem = async (req, res) => {
   try {
     const getProblems = await Problem.find({});
 
-    if (!getProblems) return res.status(404).send("Problems are missing");
+
+    // kyu ki array type ka hota h
+    if (getProblems.length==0) return res.status(404).send("Problems are missing");
 
     res.status(200).send(getProblems)
 
