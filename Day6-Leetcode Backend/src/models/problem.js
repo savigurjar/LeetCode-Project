@@ -16,7 +16,7 @@ const problemSchema = new Schema({
         required: true
     },
     tags: {
-        type: String,
+        type:String,
         enum: ["array", "linkedlist", "binarysearch", "stack", "queue", "tree", "graph", "dp"],
         required: true
     }
