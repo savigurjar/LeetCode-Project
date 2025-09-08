@@ -18,7 +18,7 @@ authRouter.post("/logout", userMiddleware, logout);
 authRouter.get("/getProfile", userMiddleware, getProfile)
 
 // deleteProfile
-
+authRouter.delete("/deleteProfile",userMiddleware,deleteProfile)
 
 // emailverfiy
 // forget password

@@ -121,6 +121,19 @@ const adminSignup = async (req, res) => {
     }
 }
 
+const deleteProfile = async (req, res) => {
+    try {
+        const userId = req.result._id;
+        // user Schema se delete 
+        await User.findByIdAndDelete(userId);
+        // submission schema se bhi delete
+        // await Submission.deleteMany({ userId })
 
+        res.status(200).send("Profile Deleted Successfully")
+    }
+    catch (err) {
+        res.status(400).send("Error " + err)
+    }
+}
 
-module.exports = { signup, login, getProfile, logout, adminSignup }
+module.exports = { signup, login, getProfile, logout, adminSignup, deleteProfile }

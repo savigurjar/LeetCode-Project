@@ -46,7 +46,12 @@ const userSchema = new Schema({
 
 }, { timestamps: true })
 
-
+// middleware todelete all submission of user when user is deleted ,using post middleware(pure mongoDB)
+userSchema.post('findOneAndDelete', async function (userInfo) {
+    if (userInfo) {
+        await mongoose.model("submission").deleteMany({ userId: userInfo._id })
+    } 
+})
 
 const User = mongoose.model("user", userSchema);
 module.exports = User
