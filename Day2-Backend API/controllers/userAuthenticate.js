@@ -1,7 +1,7 @@
-const validUser = require("../validater/validUser")
+const validUser = require("../validater/validUser");
 const User = require("../src/models/users")
 const bcrypt = require("bcrypt")
-
+const jwt = require("jsonwebtoken")
 
 const signup = async (req, res) => {
     try {
