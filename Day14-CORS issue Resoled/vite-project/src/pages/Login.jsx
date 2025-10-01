@@ -1,12 +1,13 @@
+import React from "react";
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from "zod";
 import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router';
+import { useNavigate ,Link} from 'react-router';
 import { useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import { loginUser } from '../authSlice';
+import { loginUser } from '../features/authSlice';
 
 
 const signupSchema = z.object({
@@ -75,6 +76,9 @@ function Login() {
           <button type="submit" className="btn btn-primary w-full">
             Login
           </button>
+           <p className="text-center text-sm">
+            Don't have an account? <Link to="/signup" className="text-primary">Sign Up</Link>
+          </p>
         </form>
       </div>
     </div>

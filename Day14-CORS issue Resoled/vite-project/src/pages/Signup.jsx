@@ -1,13 +1,14 @@
 
+import React from "react";
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from "zod";
 import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router';
+import { useNavigate,Link } from 'react-router';
 import { useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import { registerUser } from '../authSlice';
+import { registerUser } from '../features/authSlice';
 
 const signupSchema = z.object({
   firstName: z.string().min(3, "Name should have at least 3 characters"),
@@ -86,6 +87,10 @@ function Signup() {
           <button type="submit" className="btn btn-primary w-full">
             Sign Up
           </button>
+
+          <p className="text-center text-sm">
+            Already have an account? <Link to="/login" className="text-primary">Login</Link>
+          </p>
         </form>
       </div>
     </div>

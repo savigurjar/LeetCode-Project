@@ -1,6 +1,6 @@
 // yha js ka pure hoga , jsx use nhi kr rhe esliye jsx code nhi likhege .
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import axiosClient from './utils/axiosClient'
+import axiosClient from '../utils/axiosClient'
 
 export const registerUser = createAsyncThunk(
   'auth/signup',
