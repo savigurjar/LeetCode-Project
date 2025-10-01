@@ -2,26 +2,43 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from "zod";
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router';
+import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { loginUser } from '../authSlice';
 
 
 const signupSchema = z.object({
-  
+
   emailId: z.string().email("Invalid Email").trim(),
   password: z.string().min(8, "Password should be at least 8 characters")
 });
 
 function Login() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { isAuthenticated, loading, error } = useSelector((state) => state.auth)
+
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(signupSchema),
-    mode: "onChange", //  validates as you type
+    resolver: zodResolver(signupSchema)
+
   });
 
+  useEffect(()=>{
+    if(isAuthenticated){
+      navigate('/');
+    }
+  },[isAuthenticated,navigate])
+
   const submittedData = (data) => {
-    console.log(data);
+    // console.log(data);
+    dispatch(loginUser(data))
   };
 
   return (
@@ -29,10 +46,10 @@ function Login() {
       <div className="card w-full max-w-md shadow-xl bg-base-100 p-6">
         <h2 className="text-2xl font-bold text-center mb-6">Sign Up</h2>
         <form onSubmit={handleSubmit(submittedData)} className="flex flex-col gap-4">
-          
-          
+
+
           <div>
-            <input 
+            <input
               {...register('emailId')}
               type="email"
               placeholder="Enter Your Email"
@@ -44,7 +61,7 @@ function Login() {
           </div>
 
           <div>
-            <input 
+            <input
               {...register('password')}
               type="password"
               placeholder="Enter Your Password"
@@ -56,7 +73,7 @@ function Login() {
           </div>
 
           <button type="submit" className="btn btn-primary w-full">
-           Login
+            Login
           </button>
         </form>
       </div>
