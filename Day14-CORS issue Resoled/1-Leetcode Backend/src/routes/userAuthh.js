@@ -4,41 +4,42 @@ const adminMiddleware = require("../middleware/adminmiddleware")
 const authRouter = express.Router();
 const { signup, login, getProfile, logout, adminSignup, deleteProfile } = require("../controllers/userAuthenticate");
 
-
-// register or signup
+// Register or signup
 authRouter.post("/signup", signup)
 
-// login
+// Login
 authRouter.post("/login", login);
 
-// logout
+// Logout - FIXED: Added userMiddleware
 authRouter.post("/logout", userMiddleware, logout);
 
-// getProfile
+// Get Profile
 authRouter.get("/getProfile", userMiddleware, getProfile)
 
-// deleteProfile
+// Delete Profile
 authRouter.delete("/deleteProfile", userMiddleware, deleteProfile)
 
-// emailverfiy
-// forget password
-// reset password
-// Google signup
-
+// Admin signup
 authRouter.post("/admin/signup", adminMiddleware, adminSignup);
 
-// webiste pr authenticate user h ya nhi
+// Check authentication - IMPROVED ERROR HANDLING
 authRouter.get("/check", userMiddleware, (req, res) => {
-    const reply = {
-        FirstName: req.result.FirstName,
-        EmailId: req.result.EmailId,
-        _id: req.result._id
-
+    try {
+        const reply = {
+            FirstName: req.result.FirstName,
+            EmailId: req.result.EmailId,
+            _id: req.result._id
+        }
+        res.status(200).json({
+            user: reply,
+            message: "Valid User" //  Fixed typo: messgae -> message
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Server error",
+            error: error.message //  Only send message, not full error object
+        });
     }
-    res.status(200).json({
-        user: reply,
-        messgae: "Valid User"
-    })
-})
+});
 
 module.exports = authRouter;

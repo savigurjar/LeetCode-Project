@@ -1,20 +1,27 @@
-// yha js ka pure hoga , jsx use nhi kr rhe esliye jsx code nhi likhege .
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import axiosClient from '../utils/axiosClient'
+import axiosClient from '../utils/axiosClient';
 
+// Register User
 export const registerUser = createAsyncThunk(
   'auth/signup',
   async (userData, { rejectWithValue }) => {
     try {
-    const response =  await axiosClient.post('/user/signup', userData);
-    return response.data.user;
+      console.log("Sending signup request:", userData); // ✅ Debug log
+      const response = await axiosClient.post('/user/signup', userData);
+      console.log("Signup response:", response.data); // ✅ Debug log
+      return response.data;
     } catch (error) {
-      return rejectWithValue(error);
+      console.log("Signup error:", error); // ✅ Debug log
+      return rejectWithValue({
+        message: error.message,
+        status: error.response?.status,
+        data: error.response?.data
+      });
     }
   }
 );
 
-
+// Login User - FIXED
 export const loginUser = createAsyncThunk(
   'auth/login',
   async (credentials, { rejectWithValue }) => {
@@ -22,11 +29,17 @@ export const loginUser = createAsyncThunk(
       const response = await axiosClient.post('/user/login', credentials);
       return response.data.user;
     } catch (error) {
-      return rejectWithValue(error);
+      // ✅ Fixed: Only serializable data
+      return rejectWithValue({
+        message: error.message,
+        status: error.response?.status,
+        data: error.response?.data
+      });
     }
   }
 );
 
+// Check Auth - FIXED
 export const checkAuth = createAsyncThunk(
   'auth/check',
   async (_, { rejectWithValue }) => {
@@ -34,19 +47,30 @@ export const checkAuth = createAsyncThunk(
       const { data } = await axiosClient.get('/user/check');
       return data.user;
     } catch (error) {
-      return rejectWithValue(error);
+      // ✅ Fixed: Only serializable data
+      return rejectWithValue({
+        message: error.message,
+        status: error.response?.status,
+        data: error.response?.data
+      });
     }
   }
 );
 
+// Logout User - FIXED
 export const logoutUser = createAsyncThunk(
   'auth/logout',
   async (_, { rejectWithValue }) => {
     try {
-      await axiosClient.post('/logout');
+      await axiosClient.post('/user/logout'); // ✅ Corrected endpoint
       return null;
     } catch (error) {
-      return rejectWithValue(error);
+      // ✅ Fixed: Only serializable data
+      return rejectWithValue({
+        message: error.message,
+        status: error.response?.status,
+        data: error.response?.data
+      });
     }
   }
 );
@@ -60,6 +84,9 @@ const authSlice = createSlice({
     error: null
   },
   reducers: {
+    clearError: (state) => {
+      state.error = null;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -72,6 +99,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.isAuthenticated = !!action.payload;
         state.user = action.payload;
+        state.error = null;
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
@@ -89,10 +117,11 @@ const authSlice = createSlice({
         state.loading = false;
         state.isAuthenticated = !!action.payload;
         state.user = action.payload;
+        state.error = null;
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload?.message || 'Something went wrong';
+        state.error = action.payload?.message || 'Login failed';
         state.isAuthenticated = false;
         state.user = null;
       })
@@ -106,10 +135,11 @@ const authSlice = createSlice({
         state.loading = false;
         state.isAuthenticated = !!action.payload;
         state.user = action.payload;
+        state.error = null;
       })
       .addCase(checkAuth.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload?.message || 'Something went wrong';
+        state.error = action.payload?.message || 'Authentication check failed';
         state.isAuthenticated = false;
         state.user = null;
       })
@@ -127,11 +157,12 @@ const authSlice = createSlice({
       })
       .addCase(logoutUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload?.message || 'Something went wrong';
+        state.error = action.payload?.message || 'Logout failed';
         state.isAuthenticated = false;
         state.user = null;
       });
   }
 });
 
+export const { clearError } = authSlice.actions;
 export default authSlice.reducer;
