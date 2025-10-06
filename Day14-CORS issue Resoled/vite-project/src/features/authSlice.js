@@ -6,12 +6,12 @@ export const registerUser = createAsyncThunk(
   'auth/signup',
   async (userData, { rejectWithValue }) => {
     try {
-      console.log("Sending signup request:", userData); // ✅ Debug log
+      // console.log("Sending signup request:", userData); 
       const response = await axiosClient.post('/user/signup', userData);
-      console.log("Signup response:", response.data); // ✅ Debug log
+      // console.log("Signup response:", response.data); 
       return response.data;
     } catch (error) {
-      console.log("Signup error:", error); // ✅ Debug log
+      // console.log("Signup error:", error); 
       return rejectWithValue({
         message: error.message,
         status: error.response?.status,
@@ -29,7 +29,7 @@ export const loginUser = createAsyncThunk(
       const response = await axiosClient.post('/user/login', credentials);
       return response.data.user;
     } catch (error) {
-      // ✅ Fixed: Only serializable data
+      
       return rejectWithValue({
         message: error.message,
         status: error.response?.status,
@@ -47,7 +47,7 @@ export const checkAuth = createAsyncThunk(
       const { data } = await axiosClient.get('/user/check');
       return data.user;
     } catch (error) {
-      // ✅ Fixed: Only serializable data
+      
       return rejectWithValue({
         message: error.message,
         status: error.response?.status,
@@ -62,10 +62,10 @@ export const logoutUser = createAsyncThunk(
   'auth/logout',
   async (_, { rejectWithValue }) => {
     try {
-      await axiosClient.post('/user/logout'); // ✅ Corrected endpoint
+      await axiosClient.post('/user/logout'); 
       return null;
     } catch (error) {
-      // ✅ Fixed: Only serializable data
+      
       return rejectWithValue({
         message: error.message,
         status: error.response?.status,

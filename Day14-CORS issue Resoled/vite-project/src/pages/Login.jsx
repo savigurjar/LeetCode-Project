@@ -7,7 +7,7 @@ import { useNavigate, Link } from 'react-router';
 import { loginUser } from '../features/authSlice';
 import { useEffect } from 'react';
 
-// ✅ Backend के field names के according schema
+//  Backend के field names के according schema
 const loginSchema = z.object({
   EmailId: z.string().email("Invalid Email").trim(),
   Password: z.string().min(1, "Password is required")

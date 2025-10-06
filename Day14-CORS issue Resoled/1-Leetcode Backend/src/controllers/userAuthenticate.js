@@ -9,7 +9,7 @@ const signup = async (req, res) => {
     try {
         await validUser(req.body);
 
-        req.body.password = await bcrypt.hash(req.body.password, 10);
+        req.body.Password = await bcrypt.hash(req.body.Password, 10);
         req.body.role = "user";
 
         const people = await User.create(req.body);
