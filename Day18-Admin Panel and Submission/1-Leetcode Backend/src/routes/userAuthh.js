@@ -28,6 +28,7 @@ authRouter.get("/check", userMiddleware, (req, res) => {
         const reply = {
             FirstName: req.result.FirstName,
             EmailId: req.result.EmailId,
+             Role: req.result.Role,
             _id: req.result._id
         }
         res.status(200).json({

@@ -1,13 +1,15 @@
-import React from "react";
-import { Routes, Route, Navigate } from "react-router";
-import Home from "./pages/Home";
+import {Routes, Route ,Navigate} from "react-router";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
+import Home from "./pages/Home";
+import { useDispatch, useSelector } from 'react-redux';
 import { checkAuth } from "./features/authSlice";
-import AdminPanel from "./pages/AdminPanel";
-import ProblemPage from "./pages/ProblemPage";
+import { useEffect } from "react";
+import AdminPanel from "./components/AdminPanel";
+import ProblemPage from "./pages/ProblemPage"
+import Admin from "./pages/Admin";
+import AdminDelete from "./components/AdminDelete"
+
 function App(){
   
   const dispatch = useDispatch();
@@ -17,8 +19,6 @@ function App(){
   useEffect(() => {
     dispatch(checkAuth());
   }, [dispatch]);
-
-
   
   if (loading) {
     return <div className="min-h-screen flex items-center justify-center">
@@ -29,19 +29,14 @@ function App(){
   return(
   <>
     <Routes>
-      <Route path="/" element={isAuthenticated ?<Home/>:<Navigate to="/signup" />}></Route>
+      <Route path="/" element={isAuthenticated ?<Home></Home>:<Navigate to="/signup" />}></Route>
       <Route path="/login" element={isAuthenticated?<Navigate to="/" />:<Login></Login>}></Route>
       <Route path="/signup" element={isAuthenticated?<Navigate to="/" />:<Signup></Signup>}></Route>
-      <Route path="/admin" element={<AdminPanel/>}></Route>
+      <Route path="/admin" element={isAuthenticated && user?.Role === 'admin' ? <Admin /> : <Navigate to="/" />} />
+      <Route path="/admin/create" element={isAuthenticated && user?.Role === 'admin' ? <AdminPanel /> : <Navigate to="/" />} />
+      <Route path="/admin/delete" element={isAuthenticated && user?.Role === 'admin' ? <AdminDelete /> : <Navigate to="/" />} />
       <Route path="/problem/:problemId" element={<ProblemPage/>}></Route>
-      {/* <Route 
-        path="/admin" 
-        element={
-          isAuthenticated && user?.role === 'admin' ? 
-            <AdminPanel /> : 
-            <Navigate to="/" />
-        } 
-      /> */}
+      
     </Routes>
   </>
   )

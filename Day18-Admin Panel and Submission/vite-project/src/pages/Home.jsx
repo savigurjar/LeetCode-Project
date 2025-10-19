@@ -50,6 +50,8 @@ function Homepage() {
       solvedProblems.some(sp => sp._id === problem._id);
     return difficultyMatch && tagMatch && statusMatch;
   });
+// console.log('User Role:', user?.Role);
+// console.log('User object:', user);
 
   return (
     <div className="min-h-screen bg-base-200">
@@ -65,7 +67,7 @@ function Homepage() {
             </div>
             <ul className="mt-3 p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52">
               <li><button onClick={handleLogout}>Logout</button></li>
-              {user.Role == 'admin' && <li><NavLink to="admin">Admin</NavLink></li>}
+              {user?.Role=='admin'&&<li><NavLink to="/admin">Admin</NavLink></li>}
             </ul>
           </div>
         </div>
