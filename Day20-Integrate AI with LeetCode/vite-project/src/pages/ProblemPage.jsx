@@ -7,11 +7,10 @@ import SubmissionHistory from "../components/SubmissionHistory"
 import ChatAi from '../components/ChatAi';
 
 const langMap = {
-        cpp: 'C++',
-        java: 'Java',
-        javascript: 'JavaScript'
+  cpp: 'C++',
+  java: 'Java',
+  javascript: 'JavaScript'
 };
-
 
 const ProblemPage = () => {
   const [problem, setProblem] = useState(null);
@@ -22,170 +21,22 @@ const ProblemPage = () => {
   const [submitResult, setSubmitResult] = useState(null);
   const [activeLeftTab, setActiveLeftTab] = useState('description');
   const [activeRightTab, setActiveRightTab] = useState('code');
+  const [runLoading, setRunLoading] = useState(false);
+  const [submitLoading, setSubmitLoading] = useState(false);
   const editorRef = useRef(null);
-  let {problemId}  = useParams();
+  let { problemId } = useParams();
 
   const { handleSubmit } = useForm();
 
-
-//     _id: '507f1f77bcf86cd799439011',
-//     title: 'Two Sum',
-//     description: `Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
-
-// You may assume that each input would have exactly one solution, and you may not use the same element twice.
-
-// You can return the answer in any order.
-
-// Example 1:
-// Input: nums = [2,7,11,15], target = 9
-// Output: [0,1]
-// Explanation: Because nums[0] + nums[1] == 9, we return [0, 1].
-
-// Example 2:
-// Input: nums = [3,2,4], target = 6
-// Output: [1,2]
-
-// Example 3:
-// Input: nums = [3,3], target = 6
-// Output: [0,1]
-
-// Constraints:
-// - 2 <= nums.length <= 10^4
-// - -10^9 <= nums[i] <= 10^9
-// - -10^9 <= target <= 10^9
-// - Only one valid answer exists.`,
-//     difficulty: 'easy',
-//     tags: 'array',
-//     visibleTestCases: [
-//       {
-//         input: 'nums = [2,7,11,15], target = 9',
-//         output: '[0,1]',
-//         explanation: 'Because nums[0] + nums[1] == 9, we return [0, 1].'
-//       },
-//       {
-//         input: 'nums = [3,2,4], target = 6',
-//         output: '[1,2]',
-//         explanation: 'Because nums[1] + nums[2] == 6, we return [1, 2].'
-//       }
-//     ],
-//     startCode: [
-//       {
-//         language: 'javascript',
-//         initialCode: `/**
-//  * @param {number[]} nums
-//  * @param {number} target
-//  * @return {number[]}
-//  */
-// var twoSum = function(nums, target) {
-    
-// };`
-//       },
-//       {
-//         language: 'java',
-//         initialCode: `class Solution {
-//     public int[] twoSum(int[] nums, int target) {
-        
-//     }
-// }`
-//       },
-//       {
-//         language: 'cpp',
-//         initialCode: `class Solution {
-// public:
-//     vector<int> twoSum(vector<int>& nums, int target) {
-        
-//     }
-// };`
-//       }
-//     ],
-//     editorial: {
-//       content: `## Approach 1: Brute Force
-
-// The brute force approach is simple. Loop through each element x and find if there is another value that equals to target - x.
-
-// **Algorithm:**
-// 1. For each element in the array
-// 2. Check if target - current element exists in the rest of the array
-// 3. If found, return the indices
-
-// **Complexity Analysis:**
-// - Time complexity: O(n²)
-// - Space complexity: O(1)
-
-// ## Approach 2: Hash Table
-
-// To improve our runtime complexity, we need a more efficient way to check if the complement exists in the array. If the complement exists, we need to get its index. What is the best way to maintain a mapping of each element in the array to its index? A hash table.
-
-// **Algorithm:**
-// 1. Create a hash table to store elements and their indices
-// 2. For each element, calculate complement = target - current element
-// 3. If complement exists in hash table, return indices
-// 4. Otherwise, add current element to hash table
-
-// **Complexity Analysis:**
-// - Time complexity: O(n)
-// - Space complexity: O(n)`
-//     },
-//     solutions: [
-//       {
-//         language: 'javascript',
-//         title: 'Hash Table Approach',
-//         code: `var twoSum = function(nums, target) {
-//     const map = new Map();
-    
-//     for (let i = 0; i < nums.length; i++) {
-//         const complement = target - nums[i];
-        
-//         if (map.has(complement)) {
-//             return [map.get(complement), i];
-//         }
-        
-//         map.set(nums[i], i);
-//     }
-    
-//     return [];
-// };`
-//       },
-//       {
-//         language: 'java',
-//         title: 'Hash Table Approach',
-//         code: `class Solution {
-//     public int[] twoSum(int[] nums, int target) {
-//         Map<Integer, Integer> map = new HashMap<>();
-        
-//         for (int i = 0; i < nums.length; i++) {
-//             int complement = target - nums[i];
-            
-//             if (map.containsKey(complement)) {
-//                 return new int[] { map.get(complement), i };
-//             }
-            
-//             map.put(nums[i], i);
-//         }
-        
-//         return new int[0];
-//     }
-// }`
-//       }
-//     ]
-//   };
-
-  // Fetch problem data
   useEffect(() => {
     const fetchProblem = async () => {
       setLoading(true);
       try {
-        
         const response = await axiosClient.get(`/problem/problemById/${problemId}`);
-       
-        
         const initialCode = response.data.startCode.find(sc => sc.language === langMap[selectedLanguage]).initialCode;
-
         setProblem(response.data);
-        
         setCode(initialCode);
         setLoading(false);
-        
       } catch (error) {
         console.error('Error fetching problem:', error);
         setLoading(false);
@@ -195,7 +46,6 @@ const ProblemPage = () => {
     fetchProblem();
   }, [problemId]);
 
-  // Update code when language changes
   useEffect(() => {
     if (problem) {
       const initialCode = problem.startCode.find(sc => sc.language === langMap[selectedLanguage]).initialCode;
@@ -216,49 +66,43 @@ const ProblemPage = () => {
   };
 
   const handleRun = async () => {
-    setLoading(true);
+    setRunLoading(true);
     setRunResult(null);
-    
     try {
       const response = await axiosClient.post(`/submission/run/${problemId}`, {
         code,
         language: selectedLanguage
       });
-
       setRunResult(response.data);
-      setLoading(false);
       setActiveRightTab('testcase');
-      
     } catch (error) {
       console.error('Error running code:', error);
       setRunResult({
         success: false,
         error: 'Internal server error'
       });
-      setLoading(false);
       setActiveRightTab('testcase');
+    } finally {
+      setRunLoading(false);
     }
   };
 
   const handleSubmitCode = async () => {
-    setLoading(true);
+    setSubmitLoading(true);
     setSubmitResult(null);
-    
     try {
-        const response = await axiosClient.post(`/submission/submit/${problemId}`, {
-        code:code,
+      const response = await axiosClient.post(`/submission/submit/${problemId}`, {
+        code,
         language: selectedLanguage
       });
-
-       setSubmitResult(response.data);
-       setLoading(false);
-       setActiveRightTab('result');
-      
+      setSubmitResult(response.data);
+      setActiveRightTab('result');
     } catch (error) {
       console.error('Error submitting code:', error);
       setSubmitResult(null);
-      setLoading(false);
       setActiveRightTab('result');
+    } finally {
+      setSubmitLoading(false);
     }
   };
 
@@ -294,32 +138,31 @@ const ProblemPage = () => {
       <div className="w-1/2 flex flex-col border-r border-base-300">
         {/* Left Tabs */}
         <div className="tabs tabs-bordered bg-base-200 px-4">
-          <button 
+          <button
             className={`tab ${activeLeftTab === 'description' ? 'tab-active' : ''}`}
             onClick={() => setActiveLeftTab('description')}
           >
             Description
           </button>
-          <button 
+          <button
             className={`tab ${activeLeftTab === 'editorial' ? 'tab-active' : ''}`}
             onClick={() => setActiveLeftTab('editorial')}
           >
             Editorial
           </button>
-          <button 
+          <button
             className={`tab ${activeLeftTab === 'solutions' ? 'tab-active' : ''}`}
             onClick={() => setActiveLeftTab('solutions')}
           >
             Solutions
           </button>
-          <button 
+          <button
             className={`tab ${activeLeftTab === 'submissions' ? 'tab-active' : ''}`}
             onClick={() => setActiveLeftTab('submissions')}
           >
             Submissions
           </button>
-
-           <button 
+          <button
             className={`tab ${activeLeftTab === 'chatAI' ? 'tab-active' : ''}`}
             onClick={() => setActiveLeftTab('chatAI')}
           >
@@ -420,19 +263,19 @@ const ProblemPage = () => {
       <div className="w-1/2 flex flex-col">
         {/* Right Tabs */}
         <div className="tabs tabs-bordered bg-base-200 px-4">
-          <button 
+          <button
             className={`tab ${activeRightTab === 'code' ? 'tab-active' : ''}`}
             onClick={() => setActiveRightTab('code')}
           >
             Code
           </button>
-          <button 
+          <button
             className={`tab ${activeRightTab === 'testcase' ? 'tab-active' : ''}`}
             onClick={() => setActiveRightTab('testcase')}
           >
             Testcase
           </button>
-          <button 
+          <button
             className={`tab ${activeRightTab === 'result' ? 'tab-active' : ''}`}
             onClick={() => setActiveRightTab('result')}
           >
@@ -494,7 +337,7 @@ const ProblemPage = () => {
               {/* Action Buttons */}
               <div className="p-4 border-t border-base-300 flex justify-between">
                 <div className="flex gap-2">
-                  <button 
+                  <button
                     className="btn btn-ghost btn-sm"
                     onClick={() => setActiveRightTab('testcase')}
                   >
@@ -503,16 +346,16 @@ const ProblemPage = () => {
                 </div>
                 <div className="flex gap-2">
                   <button
-                    className={`btn btn-outline btn-sm ${loading ? 'loading' : ''}`}
+                    className={`btn btn-outline btn-sm ${runLoading ? 'loading' : ''}`}
                     onClick={handleRun}
-                    disabled={loading}
+                    disabled={runLoading || submitLoading}
                   >
                     Run
                   </button>
                   <button
-                    className={`btn btn-primary btn-sm ${loading ? 'loading' : ''}`}
+                    className={`btn btn-primary btn-sm ${submitLoading ? 'loading' : ''}`}
                     onClick={handleSubmitCode}
-                    disabled={loading}
+                    disabled={submitLoading || runLoading}
                   >
                     Submit
                   </button>
@@ -521,61 +364,106 @@ const ProblemPage = () => {
             </div>
           )}
 
-          {activeRightTab === 'testcase' && (
-            <div className="flex-1 p-4 overflow-y-auto">
-              <h3 className="font-semibold mb-4">Test Results</h3>
-              {runResult ? (
-                <div className={`alert ${runResult.success ? 'alert-success' : 'alert-error'} mb-4`}>
-                  <div>
-                    {runResult.success ? (
-                      <div>
-                        <h4 className="font-bold">✅ All test cases passed!</h4>
-                        <p className="text-sm mt-2">Runtime: {runResult.runtime+" sec"}</p>
-                        <p className="text-sm">Memory: {runResult.memory+" KB"}</p>
-                        
-                        <div className="mt-4 space-y-2">
-                          {runResult.testCases.map((tc, i) => (
-                            <div key={i} className="bg-base-100 p-3 rounded text-xs">
-                              <div className="font-mono">
-                                <div><strong>Input:</strong> {tc.stdin}</div>
-                                <div><strong>Expected:</strong> {tc.expected_output}</div>
-                                <div><strong>Output:</strong> {tc.stdout}</div>
-                                <div className={'text-green-600'}>
-                                  {'✓ Passed'}
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    ) : (
-                      <div>
-                        <h4 className="font-bold">❌ Error</h4>
-                        <div className="mt-4 space-y-2">
-                          {runResult.testCases.map((tc, i) => (
-                            <div key={i} className="bg-base-100 p-3 rounded text-xs">
-                              <div className="font-mono">
-                                <div><strong>Input:</strong> {tc.stdin}</div>
-                                <div><strong>Expected:</strong> {tc.expected_output}</div>
-                                <div><strong>Output:</strong> {tc.stdout}</div>
-                                <div className={tc.status_id==3 ? 'text-green-600' : 'text-red-600'}>
-                                  {tc.status_id==3 ? '✓ Passed' : '✗ Failed'}
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
+        {activeRightTab === 'testcase' && (
+  <div className="flex flex-col flex-1 h-full">
+    {/* Scrollable content area */}
+    <div className="flex-1 p-4 overflow-y-auto">
+      <h3 className="font-semibold mb-4">Test Results</h3>
+
+      {runResult ? (
+        <div
+          className={`alert ${
+            runResult.success ? 'alert-success' : 'alert-error'
+          }`}
+        >
+          <div>
+            {runResult.success ? (
+              <div>
+                <h4 className="font-bold">✅ All test cases passed!</h4>
+                <p className="text-sm mt-2">Runtime: {runResult.runtime} sec</p>
+                <p className="text-sm">Memory: {runResult.memory} KB</p>
+
+                <div className="mt-4 space-y-2">
+                  {runResult.testCases.map((tc, i) => (
+                    <div
+                      key={i}
+                      className="bg-base-100 p-3 rounded text-xs font-mono"
+                    >
+                      <div><strong>Input:</strong> {tc.stdin}</div>
+                      <div><strong>Expected:</strong> {tc.expected_output}</div>
+                      <div><strong>Output:</strong> {tc.stdout}</div>
+                      <div className="text-green-600">✓ Passed</div>
+                    </div>
+                  ))}
                 </div>
-              ) : (
-                <div className="text-gray-500">
-                  Click "Run" to test your code with the example test cases.
+              </div>
+            ) : (
+              <div>
+                <h4 className="font-bold">❌ Error</h4>
+
+                <div className="mt-4 space-y-2">
+                  {runResult.testCases.map((tc, i) => (
+                    <div
+                      key={i}
+                      className="bg-base-100 p-3 rounded text-xs font-mono"
+                    >
+                      <div><strong>Input:</strong> {tc.stdin}</div>
+                      <div><strong>Expected:</strong> {tc.expected_output}</div>
+                      <div><strong>Output:</strong> {tc.stdout}</div>
+                      <div
+                        className={
+                          tc.status_id === 3
+                            ? 'text-green-600'
+                            : 'text-red-600'
+                        }
+                      >
+                        {tc.status_id === 3 ? '✓ Passed' : '✗ Failed'}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              )}
-            </div>
-          )}
+              </div>
+            )}
+          </div>
+        </div>
+      ) : (
+        <div className="text-gray-500">
+          Click "Run" to test your code with the example test cases.
+        </div>
+      )}
+    </div>
+
+    {/* Fixed bottom action bar */}
+    <div className="p-4 border-t border-base-300 flex justify-between bg-base-200">
+      <div className="flex gap-2">
+        <button
+          className="btn btn-ghost btn-sm"
+          onClick={() => setActiveRightTab('console')}
+        >
+          Console
+        </button>
+      </div>
+
+      <div className="flex gap-2">
+        <button
+          className={`btn btn-outline btn-sm ${runLoading ? 'loading' : ''}`}
+          onClick={handleRun}
+          disabled={runLoading || submitLoading}
+        >
+          Run
+        </button>
+        <button
+          className={`btn btn-primary btn-sm ${submitLoading ? 'loading' : ''}`}
+          onClick={handleSubmitCode}
+          disabled={submitLoading || runLoading}
+        >
+          Submit
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
 
           {activeRightTab === 'result' && (
             <div className="flex-1 p-4 overflow-y-auto">

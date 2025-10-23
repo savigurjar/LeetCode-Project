@@ -242,13 +242,13 @@ const submittedProblem = async (req, res) => {
     const userId = req.result._id;
     const problemId = req.params.id;
 
-    const ans = await Submissioon.find({ userId, problemId })
+    const ans = await Submission.find({ userId, problemId })
     // array ke formme hoga
     if (ans.length == 0) return res.status(404).send("No Submission is present")
-    res.staus(200).send(ans);
+    res.status(200).send(ans);
 
   } catch (err) {
-    res.staus(500).send("Error " + err)
+    res.status(500).send("Error " + err)
   }
 }
 
