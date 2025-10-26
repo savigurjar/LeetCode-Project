@@ -4,7 +4,7 @@ import Editor from '@monaco-editor/react';
 import { useParams } from 'react-router';
 import axiosClient from "../utils/axiosClient"
 import SubmissionHistory from "../components/SubmissionHistory"
-import ChatAi from '../components/ChatAi';
+import ChatAI from '../components/ChatAi';
 
 const langMap = {
   cpp: 'C++',
@@ -250,10 +250,11 @@ const ProblemPage = () => {
                 <div className="prose max-w-none">
                   <h2 className="text-xl font-bold mb-4">CHAT with AI</h2>
                   <div className="whitespace-pre-wrap text-sm leading-relaxed">
-                    <ChatAi></ChatAi>
+                    <ChatAI problem={problem} />  
                   </div>
                 </div>
               )}
+
             </>
           )}
         </div>
@@ -364,105 +365,104 @@ const ProblemPage = () => {
             </div>
           )}
 
-        {activeRightTab === 'testcase' && (
-  <div className="flex flex-col flex-1 h-full">
-    {/* Scrollable content area */}
-    <div className="flex-1 p-4 overflow-y-auto">
-      <h3 className="font-semibold mb-4">Test Results</h3>
+          {activeRightTab === 'testcase' && (
+            <div className="flex flex-col flex-1 h-full">
+              {/* Scrollable content area */}
+              <div className="flex-1 p-4 overflow-y-auto">
+                <h3 className="font-semibold mb-4">Test Results</h3>
 
-      {runResult ? (
-        <div
-          className={`alert ${
-            runResult.success ? 'alert-success' : 'alert-error'
-          }`}
-        >
-          <div>
-            {runResult.success ? (
-              <div>
-                <h4 className="font-bold">✅ All test cases passed!</h4>
-                <p className="text-sm mt-2">Runtime: {runResult.runtime} sec</p>
-                <p className="text-sm">Memory: {runResult.memory} KB</p>
+                {runResult ? (
+                  <div
+                    className={`alert ${runResult.success ? 'alert-success' : 'alert-error'
+                      }`}
+                  >
+                    <div>
+                      {runResult.success ? (
+                        <div>
+                          <h4 className="font-bold">✅ All test cases passed!</h4>
+                          <p className="text-sm mt-2">Runtime: {runResult.runtime} sec</p>
+                          <p className="text-sm">Memory: {runResult.memory} KB</p>
 
-                <div className="mt-4 space-y-2">
-                  {runResult.testCases.map((tc, i) => (
-                    <div
-                      key={i}
-                      className="bg-base-100 p-3 rounded text-xs font-mono"
-                    >
-                      <div><strong>Input:</strong> {tc.stdin}</div>
-                      <div><strong>Expected:</strong> {tc.expected_output}</div>
-                      <div><strong>Output:</strong> {tc.stdout}</div>
-                      <div className="text-green-600">✓ Passed</div>
+                          <div className="mt-4 space-y-2">
+                            {runResult.testCases.map((tc, i) => (
+                              <div
+                                key={i}
+                                className="bg-base-100 p-3 rounded text-xs font-mono"
+                              >
+                                <div><strong>Input:</strong> {tc.stdin}</div>
+                                <div><strong>Expected:</strong> {tc.expected_output}</div>
+                                <div><strong>Output:</strong> {tc.stdout}</div>
+                                <div className="text-green-600">✓ Passed</div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ) : (
+                        <div>
+                          <h4 className="font-bold">❌ Error</h4>
+
+                          <div className="mt-4 space-y-2">
+                            {runResult.testCases.map((tc, i) => (
+                              <div
+                                key={i}
+                                className="bg-base-100 p-3 rounded text-xs font-mono"
+                              >
+                                <div><strong>Input:</strong> {tc.stdin}</div>
+                                <div><strong>Expected:</strong> {tc.expected_output}</div>
+                                <div><strong>Output:</strong> {tc.stdout}</div>
+                                <div
+                                  className={
+                                    tc.status_id === 3
+                                      ? 'text-green-600'
+                                      : 'text-red-600'
+                                  }
+                                >
+                                  {tc.status_id === 3 ? '✓ Passed' : '✗ Failed'}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
-                  ))}
+                  </div>
+                ) : (
+                  <div className="text-gray-500">
+                    Click "Run" to test your code with the example test cases.
+                  </div>
+                )}
+              </div>
+
+              {/* Fixed bottom action bar */}
+              <div className="p-4 border-t border-base-300 flex justify-between bg-base-200">
+                <div className="flex gap-2">
+                  <button
+                    className="btn btn-ghost btn-sm"
+                    onClick={() => setActiveRightTab('console')}
+                  >
+                    Console
+                  </button>
+                </div>
+
+                <div className="flex gap-2">
+                  <button
+                    className={`btn btn-outline btn-sm ${runLoading ? 'loading' : ''}`}
+                    onClick={handleRun}
+                    disabled={runLoading || submitLoading}
+                  >
+                    Run
+                  </button>
+                  <button
+                    className={`btn btn-primary btn-sm ${submitLoading ? 'loading' : ''}`}
+                    onClick={handleSubmitCode}
+                    disabled={submitLoading || runLoading}
+                  >
+                    Submit
+                  </button>
                 </div>
               </div>
-            ) : (
-              <div>
-                <h4 className="font-bold">❌ Error</h4>
-
-                <div className="mt-4 space-y-2">
-                  {runResult.testCases.map((tc, i) => (
-                    <div
-                      key={i}
-                      className="bg-base-100 p-3 rounded text-xs font-mono"
-                    >
-                      <div><strong>Input:</strong> {tc.stdin}</div>
-                      <div><strong>Expected:</strong> {tc.expected_output}</div>
-                      <div><strong>Output:</strong> {tc.stdout}</div>
-                      <div
-                        className={
-                          tc.status_id === 3
-                            ? 'text-green-600'
-                            : 'text-red-600'
-                        }
-                      >
-                        {tc.status_id === 3 ? '✓ Passed' : '✗ Failed'}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      ) : (
-        <div className="text-gray-500">
-          Click "Run" to test your code with the example test cases.
-        </div>
-      )}
-    </div>
-
-    {/* Fixed bottom action bar */}
-    <div className="p-4 border-t border-base-300 flex justify-between bg-base-200">
-      <div className="flex gap-2">
-        <button
-          className="btn btn-ghost btn-sm"
-          onClick={() => setActiveRightTab('console')}
-        >
-          Console
-        </button>
-      </div>
-
-      <div className="flex gap-2">
-        <button
-          className={`btn btn-outline btn-sm ${runLoading ? 'loading' : ''}`}
-          onClick={handleRun}
-          disabled={runLoading || submitLoading}
-        >
-          Run
-        </button>
-        <button
-          className={`btn btn-primary btn-sm ${submitLoading ? 'loading' : ''}`}
-          onClick={handleSubmitCode}
-          disabled={submitLoading || runLoading}
-        >
-          Submit
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+            </div>
+          )}
 
 
           {activeRightTab === 'result' && (
