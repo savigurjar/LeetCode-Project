@@ -9,6 +9,7 @@ const problemRouter = require("./routes/problemCreater")
 const submitRouter = require("./routes/submit")
 const cors = require("cors");
 const aiRouter = require("./routes/aiChatting");
+const videoRouter = require("./routes/videoCreator");
 
 
 app.use(cors({
@@ -22,7 +23,8 @@ app.use(cookieParser())
 app.use("/user", authRouter)
 app.use("/problem", problemRouter)
 app.use("/submission",submitRouter);
-app.use("/ai",aiRouter)
+app.use("/ai",aiRouter);
+app.use("/video",videoRouter);
 
 
 const InitializeConnections = async () => {
