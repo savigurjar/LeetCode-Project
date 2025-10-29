@@ -199,8 +199,8 @@ const getProblemById = async (req, res) => {
 
     if (!DsaProblem) return res.status(400).send("Problem is missing")
 
-    // video ka jo bhi url wagera le aao
-    const videos = await SolutionVideo.find({ problemId: id });
+    // // video ka jo bhi url wagera le aao
+    const videos = await SolutionVideo.findOne({ problemId: id });
     if (videos) {
 
       DsaProblem.secureUrl = secureUrl;
