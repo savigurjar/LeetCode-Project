@@ -187,37 +187,46 @@ const deleteProblem = async (req, res) => {
 
 }
 const getProblemById = async (req, res) => {
-
   const { id } = req.params;
   try {
-    if (!id) return res.status(400).send("ID is missing");
+    if (!id)
+      return res.status(400).send("ID is Missing");
 
-    // problem present h ya nhi and kon kon se field lana h
-    const DsaProblem = await Problem.findById(id).select('_id title description difficulty tags visibleTestCases startCode referenceSolution');
+    const getProblem = await Problem.findById(id)
+      .select('_id title description difficulty tags visibleTestCases startCode referenceSolution');
 
+    if (!getProblem)
+      return res.status(404).send("Problem is Missing");
 
-
-    if (!DsaProblem) return res.status(400).send("Problem is missing")
-
-    // // video ka jo bhi url wagera le aao
+    // 🧩 Check video existence
     const videos = await SolutionVideo.findOne({ problemId: id });
+    // console.log("Fetched video document:", videos);
+
+    // console.log(getProblem)
     if (videos) {
+      const responseData = {
+        ...getProblem.toObject(),
+        secureUrl: videos.secureUrl,
+        thumbnailUrl: videos.thumbnailUrl,
+        duration: videos.duration,
+      };
 
-      DsaProblem.secureUrl = videos.secureUrl;
-      DsaProblem.thumbnailUrl = videos.thumbnailUrl;
-      DsaProblem.duration = videos.duration;
+      // console.log("Video URL:", videos.secureUrl);
+      // console.log("Thumbnail URL:", videos.thumbnailUrl);
+      // console.log("Duration:", videos.duration);
 
-      res.status(200).send(DsaProblem)
+      return res.status(200).send(responseData);
     }
 
+    res.status(200).send(getProblem);
 
-    res.status(200).send(DsaProblem)
+  } catch (err) {
+    console.error("Error fetching problem:", err);
+    res.status(500).send("Error: " + err);
   }
-  catch (err) {
-    res.status(500).send("Error " + err)
-  }
+};
 
-}
+
 
 const getAllProblem = async (req, res) => {
   // empty object dedenge jisse sari problem fetch hokr aa jayegi
