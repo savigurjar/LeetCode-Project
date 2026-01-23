@@ -58,7 +58,7 @@ const waiting = async (timer) => {
 
 const submitToken = async (resultToken) => {
 
-  const axios = require('axios');
+ 
 
   const options = {
     method: 'GET',

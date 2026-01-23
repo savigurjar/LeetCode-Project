@@ -50,12 +50,12 @@ function Signup() {
       <div className="card w-full max-w-md shadow-xl bg-base-100 p-6">
         <h2 className="text-2xl font-bold text-center mb-6">Sign Up</h2>
 
-        {/* Error Display
+        {/* Error Display */}
         {error && (
           <div className="alert alert-error mb-4">
             <span>{error}</span>
           </div>
-        )} */}
+        )}
 
         <form onSubmit={handleSubmit(submittedData)} className="flex flex-col gap-4">
           <div>
