@@ -27,6 +27,13 @@ app.use("/ai",aiRouter);
 app.use("/video",videoRouter);
 
 
+app.get('/',(req,res)=>{
+    res.send({
+        activeStatus:true,
+        error:false
+    })
+})
+
 const InitializeConnections = async () => {
     try {
         await Promise.all([main(), redisClient.connect()])
